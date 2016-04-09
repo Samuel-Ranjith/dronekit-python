@@ -124,7 +124,9 @@ class MAVSystem(mavutil.mavsource):
         if hasattr(message, 'target_component'):
             message.target_component = self.target_component
 
-
+    def pipe(self, out):
+        '''Pipe *all* messages coming across vehicle connection into out.  This is deprecated in favour of calling pipe() on the connection itself'''
+        return self.conn.pipe(out)
 
 class MAVConnection(object):
     def __init__(self, ip, baud=115200, source_system=255, use_native=False):
@@ -302,8 +304,8 @@ class MAVConnection(object):
             time.sleep(0.1)
         self.master.close()
 
+    # pipe all messages on this connection into target
     def pipe(self, target):
-        target.target_system = self.target_system
 
         # vehicle -> self -> target
         @self.forward_message
@@ -321,7 +323,6 @@ class MAVConnection(object):
         @target.forward_message
         def callback(_, msg):
             msg = copy.copy(msg)
-            target.fix_targets(msg)
             try:
                 self.out_queue.put(msg.pack(self.master.mav))
             except:
