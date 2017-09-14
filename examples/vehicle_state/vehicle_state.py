@@ -83,6 +83,9 @@ print " Airspeed: %s" % vehicle.airspeed    # settable
 print " Mode: %s" % vehicle.mode.name    # settable
 print " Armed: %s" % vehicle.armed    # settable
 
+while True:
+    print("Loop: %s" % str(vehicle.last_heartbeat))
+    time.sleep(1)
 
 
 # Get Vehicle Home location - will be `None` until first set by autopilot
